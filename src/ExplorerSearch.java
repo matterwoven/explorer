@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class ExplorerSearch {
 
@@ -28,10 +31,72 @@ public class ExplorerSearch {
      * @param island the locations on the island
      * @return the number of spaces the explorer can reach
      */
+    static int[] explorer = new int[2];
+    static Set<int[]> visitedSpaces = new HashSet();
     public static int reachableArea(int[][] island) {
+        explorer = getExplorer(island);
+        canReach(island, explorer);
         // Implement your method here!
         // Please also make more test cases
         // I STRONGLY RECOMMEND testing some helpers you might make too
-        return -1;
+        return visitedSpaces.size();
+    }    
+    
+    public static void canReach(int[][] island, int[] current){
+        visitedSpaces.add(current);
+        List<int[]> neighbors = openSpaces(island, current);
+        for(int[] neighbor : neighbors){
+            if(visitedSpaces.contains(neighbor)) continue;
+            canReach(island, neighbor);
+        }
+    }
+
+    private static List<int[]> openSpaces(int[][] island, int[] current) {
+        int curR = current[0];
+        int curC = current[1];
+
+        int newR, newC;
+        List<int[]> possible = new ArrayList<>();
+
+        //Up
+        newR = curR - 1;
+        newC = curC;
+        if(newR >= 0 && island[newR][newC] != 2 || newR >= 0 && island[newR][newC] != 3){
+            possible.add(new int[]{newR, newC});
+        }
+
+        //Down
+        newR = curR + 1;
+        newC = curC;
+        if(newR < island.length && island[newR][newC] != 2 || newR < island.length && island[newR][newC] != 3){
+            possible.add(new int[]{newR, newC});
+        }
+
+        //Left
+        newR = curR;
+        newC = curC -1;
+        if(newC >= 0 && island[newR][newC] != 2 || newC >= 0 && island[newR][newC] != 3 ){
+            possible.add(new int[]{newR, newC});
+        }
+
+        //Right
+        newR = curR;
+        newC = curC + 1;
+        if(newC < island[newR].length && island[newR][newC] != 2 || newC < island[newR].length && island[newR][newC] != 3){
+            possible.add(new int[]{newR, newC});
+        }
+
+        return new LinkedList<>();
+    }
+
+    private static int[] getExplorer(int[][] island) {
+        for(int i = 0; i < island.length; i++){
+            for(int j = 0; j < island[i].length; i++){
+                if(island[i][j] == 0){
+                    return new int[]{i, j};
+                }
+            }
+        }
+        throw new IllegalArgumentException("No explorer present");
     }
 }
